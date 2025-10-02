@@ -1,0 +1,14 @@
+/Users/macbook/RiderProjects/innowise-pre-traine-courses/month_1/task_1_calculator/task_1_calculator/bin/Debug/net9.0/task_1_calculator
+/Users/macbook/RiderProjects/innowise-pre-traine-courses/month_1/task_1_calculator/task_1_calculator/bin/Debug/net9.0/task_1_calculator.deps.json
+/Users/macbook/RiderProjects/innowise-pre-traine-courses/month_1/task_1_calculator/task_1_calculator/bin/Debug/net9.0/task_1_calculator.runtimeconfig.json
+/Users/macbook/RiderProjects/innowise-pre-traine-courses/month_1/task_1_calculator/task_1_calculator/bin/Debug/net9.0/task_1_calculator.dll
+/Users/macbook/RiderProjects/innowise-pre-traine-courses/month_1/task_1_calculator/task_1_calculator/bin/Debug/net9.0/task_1_calculator.pdb
+/Users/macbook/RiderProjects/innowise-pre-traine-courses/month_1/task_1_calculator/task_1_calculator/obj/Debug/net9.0/task_1_calculator.GeneratedMSBuildEditorConfig.editorconfig
+/Users/macbook/RiderProjects/innowise-pre-traine-courses/month_1/task_1_calculator/task_1_calculator/obj/Debug/net9.0/task_1_calculator.AssemblyInfoInputs.cache
+/Users/macbook/RiderProjects/innowise-pre-traine-courses/month_1/task_1_calculator/task_1_calculator/obj/Debug/net9.0/task_1_calculator.AssemblyInfo.cs
+/Users/macbook/RiderProjects/innowise-pre-traine-courses/month_1/task_1_calculator/task_1_calculator/obj/Debug/net9.0/task_1_calculator.csproj.CoreCompileInputs.cache
+/Users/macbook/RiderProjects/innowise-pre-traine-courses/month_1/task_1_calculator/task_1_calculator/obj/Debug/net9.0/task_1_calculator.dll
+/Users/macbook/RiderProjects/innowise-pre-traine-courses/month_1/task_1_calculator/task_1_calculator/obj/Debug/net9.0/refint/task_1_calculator.dll
+/Users/macbook/RiderProjects/innowise-pre-traine-courses/month_1/task_1_calculator/task_1_calculator/obj/Debug/net9.0/task_1_calculator.pdb
+/Users/macbook/RiderProjects/innowise-pre-traine-courses/month_1/task_1_calculator/task_1_calculator/obj/Debug/net9.0/task_1_calculator.genruntimeconfig.cache
+/Users/macbook/RiderProjects/innowise-pre-traine-courses/month_1/task_1_calculator/task_1_calculator/obj/Debug/net9.0/ref/task_1_calculator.dll
