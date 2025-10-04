@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics;
+using System.Text;
 using static System.Single;
 
 namespace task_1_calculator;
@@ -7,48 +8,40 @@ class Program
 {
     static void Main(string[] args)
     {
-        var key = "0";
+        var mathResolver = new MathResolver();
+        var menuHandler = new MenuHandler();
+        
+        string key;
         do
         {
-            Console.Clear();
-            
-            Console.WriteLine("Введите первое число: ");
-            TryParse(Console.ReadLine(), out var num1);
-
-            Console.WriteLine("Выберите оператор: ");
-            Console.WriteLine("1. +\n2. -\n3. *\n4. /\n");
-            var mathOperator = Console.ReadLine();
-
-            Console.WriteLine("Введите второе число: ");
-            TryParse(Console.ReadLine(), out var num2);
-
-            float result = 0;
-            switch (mathOperator)
+            try
             {
-                case "1":
-                case "+":
-                    result = num1 + num2;
-                    break;
-                case "2":
-                case "-":
-                    result = num1 - num2;
-                    break;
-                case "3":
-                case "*":
-                    result = num1 * num2;
-                    break;
-                case "4":
-                case "/":
-                    result = num1 / num2;
-                    break;
+                menuHandler.PrintMainMenu();
+
+                var num1 = menuHandler.GetNumberFromUser("Введите первое число:");
+                mathResolver.AddNumber(num1);
+
+                var op = menuHandler.GetOperatorFromUser();
+                mathResolver.AddOperator(op);
+                
+                var num2 = menuHandler.GetNumberFromUser("Введите второе число:");
+                mathResolver.AddNumber(num2);
+                
+                var result = mathResolver.Calculate();
+                Console.WriteLine($"\nРезультат: {num1} {op} {num2} = {result}");
             }
-
-            Console.WriteLine($"Ответ: {num1} {mathOperator} {num2} = {result}");
-
-            Console.WriteLine();
-            Console.WriteLine("1. Выполнить новую операцию");
-            Console.WriteLine("2. Выйти");
-            key = Console.ReadLine();
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Ошибка: {ex.Message}");
+            }
+            finally
+            {
+                mathResolver.Clear();
+            }
+            
+            menuHandler.PrintRepeatMenu();
+            key = Console.ReadLine() ?? "2";
+            
         } while (key.Equals("1"));
     }
 }
