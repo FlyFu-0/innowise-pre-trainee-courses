@@ -9,22 +9,21 @@ class Program
     static void Main(string[] args)
     {
         var mathResolver = new MathResolver();
-        var menuHandler = new MenuHandler();
         
         string key;
         do
         {
             try
             {
-                menuHandler.PrintMainMenu();
+                MenuHandler.PrintMainMenu();
 
-                var num1 = menuHandler.GetNumberFromUser("Введите первое число:");
+                var num1 = MenuHandler.GetNumberFromUser("Введите первое число:");
                 mathResolver.AddNumber(num1);
 
-                var op = menuHandler.GetOperatorFromUser();
+                var op = MenuHandler.GetOperatorFromUser();
                 mathResolver.AddOperator(op);
                 
-                var num2 = menuHandler.GetNumberFromUser("Введите второе число:");
+                var num2 = MenuHandler.GetNumberFromUser("Введите второе число:");
                 mathResolver.AddNumber(num2);
                 
                 var result = mathResolver.Calculate();
@@ -39,7 +38,7 @@ class Program
                 mathResolver.Clear();
             }
             
-            menuHandler.PrintRepeatMenu();
+            MenuHandler.PrintRepeatMenu();
             key = Console.ReadLine() ?? "2";
             
         } while (key.Equals("1"));

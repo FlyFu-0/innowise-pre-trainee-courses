@@ -6,7 +6,7 @@ public class MathResolver
     private readonly List<string> _operators = [];
     private float _result = 0;
 
-    public static readonly string[] ValidOperators = ["+", "-", "*", "/"];
+    private static readonly string[] ValidOperators = ["+", "-", "*", "/"];
 
     public void AddNumber(float number)
     {
@@ -31,9 +31,9 @@ public class MathResolver
 
         _result = _numbers[0];
         
-        for (int i = 1; i < _numbers.Count; i++)
+        for (var i = 1; i < _numbers.Count; i++)
         {
-            string currentOperator = _operators.Count >= i ? _operators[i - 1] : _operators[^1];
+            var currentOperator = _operators.Count >= i ? _operators[i - 1] : _operators[^1];
             
             switch (currentOperator)
             {
