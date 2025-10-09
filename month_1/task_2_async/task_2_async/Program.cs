@@ -14,14 +14,18 @@ class Program
         {
             foreach (var item in data)
             {
-                DataProcessor.ProcessData(item);
+                Console.WriteLine(DataProcessor.ProcessData(item));
             }
         });
         Console.WriteLine();
         
         var tasks = data.Select(AsyncDataProcessor.ProcessDataAsync).ToArray();
         
-        await stopwatch.MeasureExec(async () => await Task.WhenAll(tasks));
-        
+        var result = stopwatch.MeasureExec(async () => await Task.WhenAll(tasks));
+
+        foreach (var res in result.Result)
+        {
+            Console.WriteLine(res);
+        }
     }
 }

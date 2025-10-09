@@ -18,16 +18,18 @@ public static class StopwatchWrapper
         Console.WriteLine($"Замер времени sync обработки закончен: {stopwatch.Elapsed}");
     }
     
-    public static async Task MeasureExec(this Stopwatch stopwatch, Func<Task> func)
+    public static async Task<T[]> MeasureExec<T>(this Stopwatch stopwatch, Func<Task<T[]>> func)
     {
         stopwatch.Reset();
         Console.WriteLine($"Замер времени async обработки начат: {stopwatch.Elapsed}");
         
         stopwatch.Start();
 
-        await func();
+        var result = await func();
         
         stopwatch.Stop();
         Console.WriteLine($"Замер времени async обработки закончен: {stopwatch.Elapsed}");
+        
+        return result;
     }
 }
