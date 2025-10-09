@@ -1,4 +1,6 @@
-﻿namespace task_2_async;
+﻿using System.Diagnostics;
+
+namespace task_2_async;
 
 class Program
 {
@@ -6,33 +8,20 @@ class Program
     {
         string[] data = ["Файл 1", "Файл 2", "Файл 3"];
 
-        foreach (var item in data)
-        {
-            Console.WriteLine(ProcessData(item));
-        }
-
-        var tasks = data.Select(ProcessDataAsync).ToArray();
-
-        var results = await Task.WhenAll(tasks);
+        var stopwatch = new Stopwatch();
         
-        Console.WriteLine();
-        foreach (var item in results)
+        stopwatch.MeasureExec(() =>
         {
-            Console.WriteLine(item);
-        }
-    }
-
-    public static string ProcessData(string dataName)
-    {
-        Thread.Sleep(3000);
-
-        return $"Обработка {dataName} завершена за 3 секунды";
-    }
-
-    public static async Task<string> ProcessDataAsync(string dataName)
-    {
-        await Task.Delay(3000);
-
-        return $"Обработка {dataName} завершена за 3 секунды";
+            foreach (var item in data)
+            {
+                DataProcessor.ProcessData(item);
+            }
+        });
+        Console.WriteLine();
+        
+        var tasks = data.Select(AsyncDataProcessor.ProcessDataAsync).ToArray();
+        
+        await stopwatch.MeasureExec(async () => await Task.WhenAll(tasks));
+        
     }
 }
