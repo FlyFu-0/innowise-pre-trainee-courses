@@ -4,17 +4,17 @@ namespace task_4_library_manger.Contracts.Service;
 
 public interface IAuthorService
 {
-    Task<IEnumerable<Author>> GetAllAuthorsAsync(bool trackChanges);
+    IEnumerable<Author> GetAllAuthors(bool trackChanges);
 
-    Task<Author> GetAuthorAsync(int id, bool trackChanges);
+    Author GetAuthor(int id, bool trackChanges);
 
-    Task<Author> CreateAuthorAsync(Author author);
+    Author CreateAuthor(Author author);
 
-    Task<IEnumerable<Author>> GetByIdsAsync(IEnumerable<int> ids, bool trackChanges);
+    IEnumerable<Author> GetByIds(IEnumerable<int> ids, bool trackChanges);
 
-    Task<(IEnumerable<Author> authors, string ids)> CreateAuthorCollectionAsync(IEnumerable<Author> authors);
+    (IEnumerable<Author> authors, string ids) CreateAuthorCollection(IEnumerable<Author> authors);
 
-    Task DeleteAuthorAsync(int id, bool trackChanges);
+    void DeleteAuthor(int id, bool trackChanges);
 
-    Task UpdateAuthorAsync(int id, Author author, bool trackChanges);
+    void UpdateAuthor(int id, Author authorForUpdate, bool trackChanges);
 }

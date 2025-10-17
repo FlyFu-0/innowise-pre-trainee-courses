@@ -4,25 +4,20 @@ using task_4_library_manger.Models;
 namespace task_4_library_manger.Repository;
 
 public class AuthorRepository(RepositoryContext repositoryContext)
-    : RepositoryBase<Author>(repositoryContext), IAuthorRepository
+    : RepositoryBase<Author>(repositoryContext.Authors), IAuthorRepository
 {
-    public Task<IEnumerable<Author>> GetAuthorsAsync(bool trackChanges)
-    {
-        throw new NotImplementedException();
-    }
+    public IEnumerable<Author> GetAuthors(bool trackChanges)
+        => FindAll(trackChanges).ToList();
 
-    public Task<Author> GetAuthorAsync(int id, bool trackChanges)
-    {
-        throw new NotImplementedException();
-    }
+    public Author? GetAuthor(int id, bool trackChanges)
+        => FindByCondition(b => b.Id.Equals(id), trackChanges).SingleOrDefault();
+
+    public void UpdateAuthor(Author authorForUpdate)
+        => Update(authorForUpdate);
 
     public void CreateAuthor(Author author)
-    {
-        throw new NotImplementedException();
-    }
+        => Create(author);
 
     public void DeleteAuthor(Author author)
-    {
-        throw new NotImplementedException();
-    }
+        => Delete(author);
 }

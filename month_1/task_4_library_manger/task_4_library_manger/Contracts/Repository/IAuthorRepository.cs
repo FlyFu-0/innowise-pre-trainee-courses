@@ -4,9 +4,10 @@ namespace task_4_library_manger.Contracts.Repository;
 
 public interface IAuthorRepository
 {
-    Task<IEnumerable<Author>> GetAuthorsAsync(bool trackChanges);
-    Task<Author> GetAuthorAsync(int id, bool trackChanges);
+    IEnumerable<Author> GetAuthors(bool trackChanges);
+    Author? GetAuthor(int id, bool trackChanges);
 
+    void UpdateAuthor(Author authorForUpdate);
     void CreateAuthor(Author author);
 
     void DeleteAuthor(Author author);

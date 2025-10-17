@@ -11,6 +11,8 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
+        builder.Services.AddSingleton<RepositoryContext>();
+        
         builder.Services.AddScoped<IRepositoryManager, RepositoryManager>();
         builder.Services.AddScoped<IServiceManager, ServiceManager>();
         
@@ -18,7 +20,7 @@ public class Program
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-
+        
         var app = builder.Build();
 
         if (app.Environment.IsDevelopment())
@@ -50,6 +52,11 @@ public class Program
             })
             .WithName("GetWeatherForecast")
             .WithOpenApi();
+
+        app.MapGet("/authors", (HttpContext httpContext, IServiceManager service) =>
+        {
+            return service.AuthorService.GetAllAuthors(false);
+        });
 
         app.Run();
     }

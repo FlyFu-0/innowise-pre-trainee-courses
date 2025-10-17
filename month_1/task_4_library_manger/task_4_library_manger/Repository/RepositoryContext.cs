@@ -10,13 +10,13 @@ public class RepositoryContext
     public void SeedData()
     {
         Authors.AddRange([
-            new Author { Id = 1, Name = "Лев Толстой" },
-            new Author { Id = 2, Name = "Фёдор Достоевский" }
+            new Author { Id = 1, Name = "Лев Толстой", DateOfBirth = DateTime.Today },
+            new Author { Id = 2, Name = "Фёдор Достоевский", DateOfBirth = DateTime.Today }
         ]);
 
         Books.AddRange([
-            new Book { Id = 1, Title = "Война и мир", AuthorId = 1 },
-            new Book { Id = 2, Title = "Преступление и наказание", AuthorId = 2 }
+            new Book { Id = 1, Title = "Война и мир", AuthorId = 1, PublishedYear = DateTime.Now },
+            new Book { Id = 2, Title = "Преступление и наказание", AuthorId = 2, PublishedYear = DateTime.Now }
         ]);
     }
     

@@ -4,46 +4,53 @@ using task_4_library_manger.Models;
 
 namespace task_4_library_manger.Service;
 
-public sealed class AuthorService: IAuthorService
+public sealed class AuthorService(IRepositoryManager repository) : IAuthorService
 {
-    private readonly IRepositoryManager _repository;
-    public AuthorService(IRepositoryManager repository)
+    public IEnumerable<Author> GetAllAuthors(bool trackChanges)
     {
-        _repository = repository;
+        return repository.AuthorRepository.GetAuthors(trackChanges);
     }
 
-    public Task<IEnumerable<Author>> GetAllAuthorsAsync(bool trackChanges)
+    public Author GetAuthor(int id, bool trackChanges)
+    {
+        return repository.AuthorRepository.GetAuthor(id, trackChanges);
+    }
+
+    public Author CreateAuthor(Author author)
+    {
+        repository.AuthorRepository.CreateAuthor(author);
+        return author;
+    }
+
+    public IEnumerable<Author> GetByIds(IEnumerable<int> ids, bool trackChanges)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Author> GetAuthorAsync(int id, bool trackChanges)
+    public (IEnumerable<Author> authors, string ids) CreateAuthorCollection(IEnumerable<Author> authors)
     {
         throw new NotImplementedException();
     }
 
-    public Task<Author> CreateAuthorAsync(Author author)
+    public void DeleteAuthor(int id, bool trackChanges)
     {
-        throw new NotImplementedException();
+        var author = repository.AuthorRepository.GetAuthor(id, trackChanges);
+
+        if (author is null)
+        {
+            throw new Exception($"Author with {id} not found");
+        }
+        repository.AuthorRepository.DeleteAuthor(author);
     }
 
-    public Task<IEnumerable<Author>> GetByIdsAsync(IEnumerable<int> ids, bool trackChanges)
+    public void UpdateAuthor(int id, Author authorForUpdate, bool trackChanges)
     {
-        throw new NotImplementedException();
-    }
+        var author = repository.AuthorRepository.GetAuthor(id, trackChanges);
 
-    public Task<(IEnumerable<Author> authors, string ids)> CreateAuthorCollectionAsync(IEnumerable<Author> authors)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task DeleteAuthorAsync(int id, bool trackChanges)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task UpdateAuthorAsync(int id, Author author, bool trackChanges)
-    {
-        throw new NotImplementedException();
+        if (author is null)
+        {
+            throw new Exception($"Author with {id} not found");
+        }
+        repository.AuthorRepository.UpdateAuthor(authorForUpdate);
     }
 }

@@ -13,6 +13,8 @@ public sealed class RepositoryManager : IRepositoryManager
         _repositoryContext = repositoryContext;
         _authorRepository = new Lazy<IAuthorRepository>(() => new AuthorRepository(repositoryContext));
         _bookRepository = new Lazy<IBookRepository>(() => new BookRepository(repositoryContext));
+        
+        _repositoryContext.SeedData();
     }
 
     public IAuthorRepository AuthorRepository => _authorRepository.Value;

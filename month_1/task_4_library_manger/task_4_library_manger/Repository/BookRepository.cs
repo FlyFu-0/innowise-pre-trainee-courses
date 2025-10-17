@@ -4,25 +4,17 @@ using task_4_library_manger.Models;
 namespace task_4_library_manger.Repository;
 
 public class BookRepository(RepositoryContext repositoryContext)
-    : RepositoryBase<Book>(repositoryContext), IBookRepository
+    : RepositoryBase<Book>(repositoryContext.Books), IBookRepository
 {
-    public Task<IEnumerable<Book>> GetBooksAsync(bool trackChanges)
-    {
-        throw new NotImplementedException();
-    }
+    public IEnumerable<Book> GetBooks(bool trackChanges)
+        => FindAll(trackChanges).ToList().AsReadOnly();
 
-    public Task<Book> GetBookAsync(int id, bool trackChanges)
-    {
-        throw new NotImplementedException();
-    }
+    public Book GetBook(int id, bool trackChanges)
+        => FindByCondition(b => b.Id.Equals(id), trackChanges).SingleOrDefault();
 
     public void CreateBook(Book book)
-    {
-        throw new NotImplementedException();
-    }
+        => Create(book);
 
     public void DeleteBook(Book book)
-    {
-        throw new NotImplementedException();
-    }
+        => Delete(book);
 }
