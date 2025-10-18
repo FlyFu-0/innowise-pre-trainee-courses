@@ -26,21 +26,21 @@ public class Repository<T>(IDbConnectionFactory connectionFactory) : IRepository
             .ToList();
     }
     
-    public virtual IEnumerable<T> GetAll()
+    public virtual async Task<IEnumerable<T>> GetAll()
     {
         using var db = _connectionFactory.CreateConnection();
-        return db.Query<T>($"SELECT * FROM {GetTableName()}").ToList();
+        return await db.QueryAsync<T>($"SELECT * FROM {GetTableName()}");
     }
 
-    public virtual T Get(int id)
+    public virtual async Task<T> Get(int id)
     {
         using var db = _connectionFactory.CreateConnection();
 
         var sqlQuery = $"SELECT * FROM {GetTableName()} WHERE Id = @id";
-        return db.QueryFirstOrDefault<T>(sqlQuery, new { id });
+        return await db.QueryFirstOrDefaultAsync<T>(sqlQuery, new { id });
     }
 
-    public virtual void Add(T item)
+    public virtual async Task<bool> Add(T item)
     {
         using var db = _connectionFactory.CreateConnection();
         
@@ -49,10 +49,10 @@ public class Repository<T>(IDbConnectionFactory connectionFactory) : IRepository
         
         var sqlQuery =
             $"INSERT INTO {GetTableName()} ({fields}) VALUES ({valuesFields})";
-        db.Execute(sqlQuery, item);
+        return await db.ExecuteAsync(sqlQuery, item) > 0;
     }
 
-    public virtual void Update(T item)
+    public virtual async Task<bool> Update(T item)
     {
         using var db = _connectionFactory.CreateConnection();
         
@@ -62,13 +62,13 @@ public class Repository<T>(IDbConnectionFactory connectionFactory) : IRepository
             $"UPDATE {GetTableName()} " +
             $"SET {valuesFields} " +
             "WHERE Id = @Id";
-        db.Execute(sqlQuery, item);
+        return await db.ExecuteAsync(sqlQuery, item) > 0;
     }
 
-    public virtual void Delete(int id)
+    public virtual async Task<bool> Delete(int id)
     {
         using var db = _connectionFactory.CreateConnection();
         var sqlQuery = $"DELETE FROM {GetTableName()} WHERE Id = @Id";
-        db.Execute(sqlQuery, new { id });
+        return await db.ExecuteAsync(sqlQuery, new { id }) > 0;
     }
 }

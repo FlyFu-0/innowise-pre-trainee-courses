@@ -1,15 +1,9 @@
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Reflection;
 using task_3_tasks_manager.Models;
 
 namespace task_3_tasks_manager.Contracts;
 
-public interface IRepository<T> where T : BaseModel, new()
+public interface IService<T> where T : BaseModel, new()
 {
-    public string GetTableName();
-
-    public List<string> GetProperties();
-    
     public Task<IEnumerable<T>> GetAll();
     public Task<T> Get(int id);
     public Task<bool> Add(T item);

@@ -6,7 +6,7 @@ using task_3_tasks_manager;
 using task_3_tasks_manager.Models;
 using task_3_tasks_manager.Repositories;
 using task_3_tasks_manager.Contracts;
-using task_3_tasks_manager.Migrations;
+using task_3_tasks_manager.Services;
 
 class Program
 {
@@ -28,10 +28,9 @@ class Program
             Console.WriteLine("Database migrator started");
             UpdateDatabase(scope.ServiceProvider);
             Console.WriteLine("Database migrator ended");
-            
-            var taskRepository = scope.ServiceProvider.GetRequiredService<IRepository<TaskItem>>();
-            var app = new Application(taskRepository);
-            app.Run();
+
+            var app = scope.ServiceProvider.GetRequiredService<Application>();
+            await app.Run();
         }
         catch (Exception ex)
         {
@@ -63,7 +62,10 @@ class Program
             new SqlConnectionFactory(sp.GetRequiredService<string>()));
         
         services.AddTransient<IRepository<TaskItem>, TasksRepository>();
-        
+        services.AddTransient<IService<TaskItem>, TaskService>();
+
+        services.AddTransient<Application>();
+
         services.AddLogging(builder => builder
             .AddConsole()
             .SetMinimumLevel(LogLevel.Information));

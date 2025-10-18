@@ -1,4 +1,5 @@
 using task_3_tasks_manager.Contracts;
+using task_3_tasks_manager.Helpers;
 using task_3_tasks_manager.Models;
 
 namespace task_3_tasks_manager;
@@ -13,26 +14,30 @@ public enum AppState
     Exit
 }
 
-public class Application
+public class Application(IService<TaskItem> taskService)
 {
-    private readonly IRepository<TaskItem> _tasksRepository;
     private AppState _currentState = AppState.MainMenu;
 
-    public Application(IRepository<TaskItem> tasksRepository)
-    {
-        _tasksRepository = tasksRepository;
-    }
-
-    public void Run()
+    public async Task Run()
     {
         while (_currentState != AppState.Exit)
         {
-            RenderCurrentState();
-            HandleInput();
+            try
+            {
+                await RenderCurrentState();
+                HandleInput();
+            }
+            catch (Exception e)
+            {
+                MenuPrinter.PrintResult(e.Message, MenuPrinter.FAIL_ICON);
+                MenuPrinter.PrintMenuBar();
+                var key = Console.ReadLine()?.Trim();
+                HandleBarInput(key);
+            }
         }
     }
 
-    private void RenderCurrentState()
+    private async Task RenderCurrentState()
     {
         Console.Clear();
         
@@ -42,25 +47,25 @@ public class Application
                 MenuPrinter.PrintMainMenu();
                 break;
             case AppState.TasksList:
-                var tasks = _tasksRepository.GetAll();
+                var tasks = await taskService.GetAll();
                 MenuPrinter.PrintTasks(tasks);
                 MenuPrinter.PrintMenuBar();
                 break;
             case AppState.CreateTask:
-                ShowCreateTaskForm();
+                await ShowCreateTaskForm();
                 break;
             case AppState.EditTask:
-                ShowEditTaskForm();
+                await ShowEditTaskForm();
                 break;
             case AppState.DeleteTask:
-                ShowDeleteTaskForm();
+                await ShowDeleteTaskForm();
                 break;
         }
     }
 
     private void HandleInput()
     {
-        var input = Console.ReadLine();
+        var input = Console.ReadLine()?.Trim();
 
         switch (_currentState)
         {
@@ -102,28 +107,30 @@ public class Application
         return key is "Y" or "y";
     }
     
-    private void ShowCreateTaskForm()
+    private async Task ShowCreateTaskForm()
     {
         MenuPrinter.PrintTitle("Create Task");
-        
-        var newTask = new TaskItem();
-        
-        Console.Write("Title: ");
-        newTask.Title = Console.ReadLine() ?? newTask.Title;
-        
-        Console.Write("Description: ");
-        newTask.Description = Console.ReadLine() ?? newTask.Description;
-        
-        Console.Write("IsCompleted (Y/N): ");
-        newTask.IsCompleted = Console.ReadLine()?.ToUpper() == "Y";
-        
-        _tasksRepository.Add(newTask);
-        
-        MenuPrinter.PrintResult("Task Created!");
+
+        var newTask = new TaskItem
+        {
+            Title = ConsoleInputValidator.GetRequiredString("Title", 100),
+            Description = ConsoleInputValidator.GetRequiredString("Description", 500),
+            IsCompleted = ConsoleInputValidator.GetYesNo("IsCompleted")
+        };
+
+        if (await taskService.Add(newTask))
+        {
+            MenuPrinter.PrintResult("Task Created!");
+        }
+        else
+        {
+            MenuPrinter.PrintResult("Task Creating Failed!", MenuPrinter.FAIL_ICON);
+        }
+
         _currentState = AppState.MainMenu;
     }
     
-    private void ShowEditTaskForm()
+    private async Task ShowEditTaskForm()
     {
         MenuPrinter.PrintTitle("Change Task Status");
         
@@ -134,20 +141,20 @@ public class Application
             return;
         }
         
-        var currentTask = _tasksRepository.Get(id);
+        var currentTask = await taskService.Get(id);
         
         MenuPrinter.PrintTasks([currentTask]);
         
         Console.Write("IsCompleted (Y/N): ");
         currentTask.IsCompleted = Console.ReadLine()?.ToUpper() == "Y";
 
-        _tasksRepository.Update(currentTask);
+        await taskService.Update(currentTask);
         
         MenuPrinter.PrintResult("Task status changed!");
         _currentState = AppState.MainMenu;
     }
 
-    private void ShowDeleteTaskForm()
+    private async Task ShowDeleteTaskForm()
     {
         MenuPrinter.PrintTitle("Delete Task");
         
@@ -157,13 +164,13 @@ public class Application
             MenuPrinter.PrintResult("ID doesn't exist!", MenuPrinter.FAIL_ICON);
         }
 
-        var taskToDelete = _tasksRepository.Get(id);
+        var taskToDelete = await taskService.Get(id);
             
         MenuPrinter.PrintTasks([taskToDelete]);
 
         if (ConfirmAction())
         {
-            _tasksRepository.Delete(id);
+            await taskService.Delete(id);
             MenuPrinter.PrintResult("Task deleted!");
         }
         
