@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using task_4_library_manger.ActionFilters;
 using task_4_library_manger.Contracts.Service;
 using task_4_library_manger.Shared.DTOs;
 
@@ -22,7 +23,8 @@ public static class AuthorApis
         api.MapPost("/authors", CreateAuthor)
             .WithName("CreateAuthor")
             .WithSummary("Create author")
-            .WithTags("Authors");
+            .WithTags("Authors")
+            .AddEndpointFilter<ValidationFilter<AuthorDtoForCreation>>();
         api.MapPut("/authors/{id:guid}", UpdateAuthor)
             .WithName("UpdateAuthor")
             .WithSummary("Update author")
