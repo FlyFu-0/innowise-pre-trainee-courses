@@ -1,56 +1,66 @@
+using AutoMapper;
 using task_4_library_manger.Contracts.Repository;
 using task_4_library_manger.Contracts.Service;
+using task_4_library_manger.Exceptions;
 using task_4_library_manger.Models;
+using task_4_library_manger.Shared.DTOs;
 
 namespace task_4_library_manger.Service;
 
-public sealed class AuthorService(IRepositoryManager repository) : IAuthorService
+public sealed class AuthorService(IRepositoryManager repository, IMapper mapper) : IAuthorService
 {
-    public IEnumerable<Author> GetAllAuthors(bool trackChanges)
+    public IEnumerable<AuthorDto> GetAllAuthors()
     {
-        return repository.AuthorRepository.GetAuthors(trackChanges);
+        var authors = repository.AuthorRepository.GetAuthors();
+        var authorsMapped = mapper.Map<IEnumerable<AuthorDto>>(authors);
+        return authorsMapped;
     }
 
-    public Author GetAuthor(int id, bool trackChanges)
+    public AuthorDto GetAuthor(Guid id)
     {
-        return repository.AuthorRepository.GetAuthor(id, trackChanges);
+        var author = repository.AuthorRepository.GetAuthor(id);
+        var authorMapped = mapper.Map<AuthorDto>(author);
+
+        return authorMapped;
     }
 
-    public Author CreateAuthor(Author author)
+    public AuthorDto CreateAuthor(AuthorDtoForCreation author)
     {
-        repository.AuthorRepository.CreateAuthor(author);
-        return author;
+        var authorCreated = mapper.Map<Author>(author);
+
+        authorCreated.Id = Guid.NewGuid();
+        repository.AuthorRepository.CreateAuthor(authorCreated);
+
+        var authorMapped = mapper.Map<AuthorDto>(authorCreated);
+        return authorMapped;
     }
 
-    public IEnumerable<Author> GetByIds(IEnumerable<int> ids, bool trackChanges)
+    public void DeleteAuthor(Guid id)
     {
-        throw new NotImplementedException();
-    }
-
-    public (IEnumerable<Author> authors, string ids) CreateAuthorCollection(IEnumerable<Author> authors)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void DeleteAuthor(int id, bool trackChanges)
-    {
-        var author = repository.AuthorRepository.GetAuthor(id, trackChanges);
-
-        if (author is null)
-        {
-            throw new Exception($"Author with {id} not found");
-        }
+        var author = GetAuthorAndCheckIfExists(id);
         repository.AuthorRepository.DeleteAuthor(author);
     }
 
-    public void UpdateAuthor(int id, Author authorForUpdate, bool trackChanges)
+    private Author GetAuthorAndCheckIfExists(Guid id)
     {
-        var author = repository.AuthorRepository.GetAuthor(id, trackChanges);
+        var author = repository.AuthorRepository.GetAuthor(id);
 
         if (author is null)
         {
-            throw new Exception($"Author with {id} not found");
+            throw new AuthorNotFoundException(id);
         }
-        repository.AuthorRepository.UpdateAuthor(authorForUpdate);
+
+        return author;
+    }
+
+    public AuthorDto UpdateAuthor(Guid id, AuthorDtoForUpdate authorForUpdate)
+    {
+        GetAuthorAndCheckIfExists(id);
+
+        var authorUpdate = mapper.Map<Author>(authorForUpdate);
+        repository.AuthorRepository.UpdateAuthor(authorUpdate);
+
+        var authorMapped = mapper.Map<AuthorDto>(authorForUpdate);
+        return authorMapped;
     }
 }

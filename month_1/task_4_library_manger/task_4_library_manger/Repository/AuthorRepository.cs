@@ -6,14 +6,14 @@ namespace task_4_library_manger.Repository;
 public class AuthorRepository(RepositoryContext repositoryContext)
     : RepositoryBase<Author>(repositoryContext.Authors), IAuthorRepository
 {
-    public IEnumerable<Author> GetAuthors(bool trackChanges)
-        => FindAll(trackChanges).ToList();
+    public IEnumerable<Author> GetAuthors()
+        => FindAll().ToList();
 
-    public Author? GetAuthor(int id, bool trackChanges)
-        => FindByCondition(b => b.Id.Equals(id), trackChanges).SingleOrDefault();
+    public Author GetAuthor(Guid id)
+        => FindByCondition(b => b.Id.Equals(id)).SingleOrDefault();
 
-    public void UpdateAuthor(Author authorForUpdate)
-        => Update(authorForUpdate);
+    public void UpdateAuthor(Author author)
+        => Update(author);
 
     public void CreateAuthor(Author author)
         => Create(author);

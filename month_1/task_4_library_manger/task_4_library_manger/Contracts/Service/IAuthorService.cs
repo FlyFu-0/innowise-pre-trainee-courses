@@ -1,20 +1,17 @@
 using task_4_library_manger.Models;
+using task_4_library_manger.Shared.DTOs;
 
 namespace task_4_library_manger.Contracts.Service;
 
 public interface IAuthorService
 {
-    IEnumerable<Author> GetAllAuthors(bool trackChanges);
+    IEnumerable<AuthorDto> GetAllAuthors();
 
-    Author GetAuthor(int id, bool trackChanges);
+    AuthorDto GetAuthor(Guid id);
 
-    Author CreateAuthor(Author author);
+    AuthorDto CreateAuthor(AuthorDtoForCreation author);
 
-    IEnumerable<Author> GetByIds(IEnumerable<int> ids, bool trackChanges);
+    void DeleteAuthor(Guid id);
 
-    (IEnumerable<Author> authors, string ids) CreateAuthorCollection(IEnumerable<Author> authors);
-
-    void DeleteAuthor(int id, bool trackChanges);
-
-    void UpdateAuthor(int id, Author authorForUpdate, bool trackChanges);
+    AuthorDto UpdateAuthor(Guid id, AuthorDtoForUpdate authorForUpdate);
 }

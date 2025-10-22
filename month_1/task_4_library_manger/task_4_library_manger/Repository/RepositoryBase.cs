@@ -9,28 +9,24 @@ public class RepositoryBase<T>(List<T> collection) : IRepositoryBase<T>
 {
     protected readonly List<T> _collection = collection;
 
-    public IQueryable<T> FindAll(bool trackingChanges)
+    public IQueryable<T> FindAll()
         => _collection.AsQueryable();
 
-    public IQueryable<T> FindByCondition(Func<T, bool> expression, bool trackChanges)
+    public IQueryable<T> FindByCondition(Func<T, bool> expression)
         => _collection.Where(expression).AsQueryable();
 
     public void Create(T entity)
     {
-        if (entity.Id == 0)
-        {
-            var maxId = _collection.Count != 0 ? _collection.Max(b => b.Id) : 0;
-            entity.Id = maxId + 1;
-        }
-
         _collection.Add(entity);
     }
 
     public void Update(T entity)
     {
-        var index = _collection.FindIndex(e => e.Equals(entity));
+        var index = _collection.FindIndex(e => e.Id.Equals(entity.Id));
         if (index != -1)
+        {
             _collection[index] = entity;
+        }
     }
 
     public void Delete(T entity)

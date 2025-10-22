@@ -1,15 +1,16 @@
 using task_4_library_manger.Models;
+using task_4_library_manger.Shared.DTOs;
 
 namespace task_4_library_manger.Contracts.Service;
 
 public interface IBookService
 {
-    Task<IEnumerable<Book>> GetBooksAsync(int authorId, bool trackChanges);
-    Task<Book> GetBookAsync(int authorId, int id, bool trackChanges);
-    Task<Book> CreateBookForCompanyAsync(int authorId, Book bookForCreation, bool trackChanges);
+    IEnumerable<BookDto> GetBooks();
+    IEnumerable<BookDto> GetBooksForAuthor(Guid authorId);
+    BookDto GetBook(Guid authorId, Guid id);
+    BookDto CreateBookForAuthor(Guid authorId, BookDtoForCreation bookForCreation);
 
-    Task DeleteBookForCompanyAsync(int authorId, int id, bool trackChanges);
+    void DeleteBookForAuthor(Guid authorId, Guid id);
 
-    Task UpdateBookForCompanyAsync(int authorId, int id, Book bookForUpdate,
-        bool authorTrackChanges, bool bookTrackChanges);
+    BookDto UpdateBookForAuthor(Guid authorId, Guid id, BookDtoForUpdate bookForUpdate);
 }

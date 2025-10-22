@@ -1,7 +1,6 @@
-using task_4_library_manger.Contracts.Repository;
+using task_4_library_manger.Apis;
 using task_4_library_manger.Contracts.Service;
-using task_4_library_manger.Repository;
-using task_4_library_manger.Service;
+using task_4_library_manger.Extansions;
 
 namespace task_4_library_manger;
 
@@ -11,16 +10,14 @@ public class Program
     {
         var builder = WebApplication.CreateBuilder(args);
 
-        builder.Services.AddSingleton<RepositoryContext>();
-        
-        builder.Services.AddScoped<IRepositoryManager, RepositoryManager>();
-        builder.Services.AddScoped<IServiceManager, ServiceManager>();
-        
-        builder.Services.AddAuthorization();
+        builder.AddApplicationServices();
+        builder.Services.AddProblemDetails();
+
+        builder.Services.AddAutoMapper(cfg => { }, typeof(Program));
 
         builder.Services.AddEndpointsApiExplorer();
         builder.Services.AddSwaggerGen();
-        
+
         var app = builder.Build();
 
         if (app.Environment.IsDevelopment())
@@ -31,32 +28,9 @@ public class Program
 
         app.UseHttpsRedirection();
 
-        app.UseAuthorization();
-
-        var summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
-
-        app.MapGet("/weatherforecast", (HttpContext httpContext) =>
-            {
-                var forecast = Enumerable.Range(1, 5).Select(index =>
-                        new WeatherForecast
-                        {
-                            Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                            TemperatureC = Random.Shared.Next(-20, 55),
-                            Summary = summaries[Random.Shared.Next(summaries.Length)]
-                        })
-                    .ToArray();
-                return forecast;
-            })
-            .WithName("GetWeatherForecast")
-            .WithOpenApi();
-
-        app.MapGet("/authors", (HttpContext httpContext, IServiceManager service) =>
-        {
-            return service.AuthorService.GetAllAuthors(false);
-        });
+        app.MapGet("/", () => Results.Redirect("/swagger"));
+        app.MapAuthorsApi();
+        app.MapBooksApi();
 
         app.Run();
     }
