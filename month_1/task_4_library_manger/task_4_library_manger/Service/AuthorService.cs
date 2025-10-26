@@ -53,14 +53,11 @@ public sealed class AuthorService(IRepositoryManager repository, IMapper mapper)
         return author;
     }
 
-    public AuthorDto UpdateAuthor(Guid id, AuthorDtoForUpdate authorForUpdate)
+    public void UpdateAuthor(Guid id, AuthorDtoForUpdate authorForUpdate)
     {
-        GetAuthorAndCheckIfExists(id);
+        var author = GetAuthorAndCheckIfExists(id);
 
-        var authorUpdate = mapper.Map<Author>(authorForUpdate);
+        var authorUpdate = mapper.Map(authorForUpdate, author);
         repository.AuthorRepository.UpdateAuthor(authorUpdate);
-
-        var authorMapped = mapper.Map<AuthorDto>(authorForUpdate);
-        return authorMapped;
     }
 }

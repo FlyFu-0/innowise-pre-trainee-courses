@@ -16,7 +16,8 @@ public static class BookApis
             .WithName("AllBooks")
             .WithSummary("Get all books")
             .WithTags("Books");
-        api.MapGet("/books", GetBook)
+
+        api.MapGet("/books", GetBooksForAuthor)
             .WithName("Books for {authorId:guid}")
             .WithSummary("Books for author")
             .WithTags("Books");
@@ -67,15 +68,15 @@ public static class BookApis
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
     public static IResult CreateBook(IServiceManager services, Guid authorId, BookDtoForCreation book)
     {
-        services.BookService.CreateBookForAuthor(authorId, book);
-        return Results.Created();
+        var createdBook = services.BookService.CreateBookForAuthor(authorId, book);
+        return Results.Created($"api/{createdBook.AuthorId}/books/{createdBook.Id}", createdBook);
     }
 
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
     public static IResult UpdateBook(IServiceManager services, Guid authorId, Guid id, BookDtoForUpdate book)
     {
-        var bookUpdated = services.BookService.UpdateBookForAuthor(authorId, id, book);
-        return Results.Ok(bookUpdated);
+        services.BookService.UpdateBookForAuthor(authorId, id, book);
+        return Results.Ok();
     }
 
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]

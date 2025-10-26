@@ -1,4 +1,3 @@
-using task_4_library_manger.Models;
 using task_4_library_manger.Shared.DTOs;
 
 namespace task_4_library_manger.Contracts.Service;
@@ -13,5 +12,5 @@ public interface IAuthorService
 
     void DeleteAuthor(Guid id);
 
-    AuthorDto UpdateAuthor(Guid id, AuthorDtoForUpdate authorForUpdate);
+    void UpdateAuthor(Guid id, AuthorDtoForUpdate authorForUpdate);
 }

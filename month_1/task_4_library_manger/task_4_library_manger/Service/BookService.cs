@@ -39,6 +39,7 @@ public sealed class BookService(IRepositoryManager repository, IMapper mapper) :
 
         var book = mapper.Map<Book>(bookForCreation);
 
+        book.Id = Guid.NewGuid();
         book.AuthorId = author.Id;
         repository.BookRepository.CreateBook(book);
 
@@ -54,42 +55,29 @@ public sealed class BookService(IRepositoryManager repository, IMapper mapper) :
         repository.BookRepository.DeleteBook(book);
     }
 
-    public BookDto UpdateBookForAuthor(Guid authorId, Guid id, BookDtoForUpdate bookForUpdate)
-    {
-        var author = GetAuthorAndCheckIfExists(authorId);
-
-        GetBookAndCheckIfExists(authorId, id);
-
-        bookForUpdate.AuthorId = author.Id;
-
-        var book = mapper.Map<Book>(bookForUpdate);
-        repository.BookRepository.UpdateBook(book);
-
-        var bookMapped = mapper.Map<BookDto>(book);
-        return bookMapped;
-    }
-
     private Author GetAuthorAndCheckIfExists(Guid id)
     {
         var author = repository.AuthorRepository.GetAuthor(id);
 
-        if (author is null)
-        {
-            throw new AuthorNotFoundException(id);
-        }
-
-        return author;
+        return author ?? throw new AuthorNotFoundException(id);
     }
 
     private Book GetBookAndCheckIfExists(Guid authorId, Guid id)
     {
         var book = repository.BookRepository.GetBook(authorId, id);
 
-        if (book is null)
-        {
-            throw new BookNotFoundException(id);
-        }
+        return book ?? throw new BookNotFoundException(id);
+    }
 
-        return book;
+    public void UpdateBookForAuthor(Guid authorId, Guid id, BookDtoForUpdate bookForUpdate)
+    {
+        var author = GetAuthorAndCheckIfExists(authorId);
+
+        var bookEntity = GetBookAndCheckIfExists(authorId, id);
+
+        bookForUpdate.AuthorId = author.Id;
+
+        var book = mapper.Map(bookForUpdate, bookEntity);
+        repository.BookRepository.UpdateBook(book);
     }
 }

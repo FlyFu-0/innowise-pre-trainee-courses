@@ -4,18 +4,12 @@ using task_4_library_manger.Contracts.Service;
 
 namespace task_4_library_manger.Service;
 
-public sealed class ServiceManager : IServiceManager
+public sealed class ServiceManager(IRepositoryManager repositoryManager, IMapper mapper) : IServiceManager
 {
-    private readonly Lazy<IAuthorService> _authorService;
-    private readonly Lazy<IBookService> _bookService;
-
-    public ServiceManager(IRepositoryManager repositoryManager, IMapper mapper)
-    {
-        _authorService = new Lazy<IAuthorService>(() =>
-            new AuthorService(repositoryManager, mapper));
-        _bookService = new Lazy<IBookService>(() =>
-            new BookService(repositoryManager, mapper));
-    }
+    private readonly Lazy<IAuthorService> _authorService = new(() =>
+        new AuthorService(repositoryManager, mapper));
+    private readonly Lazy<IBookService> _bookService = new(() =>
+        new BookService(repositoryManager, mapper));
 
     public IAuthorService AuthorService => _authorService.Value;
     public IBookService BookService => _bookService.Value;

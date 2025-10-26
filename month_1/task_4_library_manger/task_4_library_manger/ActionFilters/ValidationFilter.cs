@@ -15,17 +15,17 @@ public class ValidationFilter<T> : IEndpointFilter where T : class
 
         var validationResults = new List<ValidationResult>();
         var validationContext = new ValidationContext(argument);
-        bool isValid = Validator.TryValidateObject(argument, validationContext, validationResults, true);
 
-        if (!isValid)
+        if (Validator.TryValidateObject(argument, validationContext, validationResults, true))
         {
-            var errors = validationResults.ToDictionary(
-                v => v.MemberNames.FirstOrDefault() ?? "Property",
-                v => new[] { v.ErrorMessage ?? "Validation error" }
-            );
-            return Results.ValidationProblem(errors);
+            return await next(context);
         }
 
-        return await next(context);
+        var errors = validationResults.ToDictionary(
+            v => v.MemberNames.FirstOrDefault() ?? "Property",
+            v => new[] { v.ErrorMessage ?? "Validation error" }
+        );
+        return Results.ValidationProblem(errors);
+
     }
 }

@@ -1,6 +1,7 @@
 using task_4_library_manger.Apis;
 using task_4_library_manger.Contracts.Service;
 using task_4_library_manger.Extansions;
+using task_4_library_manger.Extensions;
 
 namespace task_4_library_manger;
 
@@ -25,6 +26,8 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+
+        app.ConfigureExceptionHandler();
 
         app.UseHttpsRedirection();
 

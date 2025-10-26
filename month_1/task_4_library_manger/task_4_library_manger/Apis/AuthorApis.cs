@@ -53,14 +53,15 @@ public static class AuthorApis
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
     public static IResult CreateAuthor(IServiceManager services, AuthorDtoForCreation author)
     {
-        services.AuthorService.CreateAuthor(author);
-        return Results.Created();
+        var createdAuthor = services.AuthorService.CreateAuthor(author);
+        return Results.Created($"api/authors/{createdAuthor.Id}", createdAuthor);
     }
 
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
     public static IResult UpdateAuthor(IServiceManager services, Guid id, AuthorDtoForUpdate author)
     {
-        return Results.Ok(services.AuthorService.UpdateAuthor(id, author));
+        services.AuthorService.UpdateAuthor(id, author);
+        return Results.Ok();
     }
 
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]

@@ -12,5 +12,5 @@ public interface IBookService
 
     void DeleteBookForAuthor(Guid authorId, Guid id);
 
-    BookDto UpdateBookForAuthor(Guid authorId, Guid id, BookDtoForUpdate bookForUpdate);
+    void UpdateBookForAuthor(Guid authorId, Guid id, BookDtoForUpdate bookForUpdate);
 }

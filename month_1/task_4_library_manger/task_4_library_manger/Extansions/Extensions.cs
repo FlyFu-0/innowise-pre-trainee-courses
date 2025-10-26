@@ -9,10 +9,6 @@ public static class Extensions
 {
     public static void AddApplicationServices(this IHostApplicationBuilder builder)
     {
-        // REVIEW: This is done for development ease but shouldn't be here in production
-        // builder.Services.AddMigration<CatalogContext, CatalogContextSeed>();
-
-        // builder.Services.AddSingleton<RepositoryContext>();
         var context = new RepositoryContext();
         context.SeedData();
 

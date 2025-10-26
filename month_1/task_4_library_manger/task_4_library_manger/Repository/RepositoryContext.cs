@@ -56,9 +56,4 @@ public class RepositoryContext
             new Book { Id = Guid.NewGuid(), Title = "Бородино", AuthorId = new Guid("d4e5f6a7-b8c9-0123-def0-456789012345"), PublishedYear = new DateOnly(1837, 1, 1) }
         ]);
     }
-    
-    public Task SaveChangesAsync()
-    {
-        throw new NotImplementedException();
-    }
 }
