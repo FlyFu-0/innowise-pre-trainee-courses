@@ -1,4 +1,5 @@
 using AutoMapper;
+using task_4_library_manger.Entities.Models;
 using task_4_library_manger.Models;
 using task_4_library_manger.Shared.DTOs;
 

@@ -1,7 +1,9 @@
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using task_4_library_manger.ActionFilters;
 using task_4_library_manger.Contracts.Service;
 using task_4_library_manger.Shared.DTOs;
+using task_4_library_manger.Shared.RequestFeatures;
 
 namespace task_4_library_manger.Apis;
 
@@ -38,36 +40,39 @@ public static class AuthorApis
     }
 
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
-    public static IResult GetAllAuthors(IServiceManager services)
+    public static async Task<IResult> GetAllAuthors(HttpContext context, IServiceManager services,
+        [AsParameters] AuthorParameters authorParameters)
     {
-        var authors = services.AuthorService.GetAllAuthors();
-        return Results.Ok(authors.ToList());
+        var result = await services.AuthorService.GetAllAuthorsAsync(authorParameters, false);
+
+        context.Response.Headers["X-Pagination"] = JsonSerializer.Serialize(result.metaData);
+        return Results.Ok(result.authors.ToList());
     }
 
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
-    public static IResult GetAuthor(IServiceManager services, Guid id)
+    public static async Task<IResult> GetAuthor(IServiceManager services, Guid id)
     {
-        return Results.Ok(services.AuthorService.GetAuthor(id));
+        return Results.Ok(await services.AuthorService.GetAuthorAsync(id, false));
     }
 
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
-    public static IResult CreateAuthor(IServiceManager services, AuthorDtoForCreation author)
+    public static async Task<IResult> CreateAuthor(IServiceManager services, AuthorDtoForCreation author)
     {
-        var createdAuthor = services.AuthorService.CreateAuthor(author);
+        var createdAuthor = await services.AuthorService.CreateAuthorAsync(author);
         return Results.Created($"api/authors/{createdAuthor.Id}", createdAuthor);
     }
 
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
-    public static IResult UpdateAuthor(IServiceManager services, Guid id, AuthorDtoForUpdate author)
+    public static async Task<IResult> UpdateAuthor(IServiceManager services, Guid id, AuthorDtoForUpdate author)
     {
-        services.AuthorService.UpdateAuthor(id, author);
+        await services.AuthorService.UpdateAuthorAsync(id, author);
         return Results.Ok();
     }
 
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
-    public static IResult DeleteAuthor(IServiceManager services, Guid id)
+    public static async Task<IResult> DeleteAuthor(IServiceManager services, Guid id)
     {
-        services.AuthorService.DeleteAuthor(id);
+        await services.AuthorService.DeleteAuthorAsync(id);
         return Results.NoContent();
     }
 }

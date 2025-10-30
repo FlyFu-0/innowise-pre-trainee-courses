@@ -1,83 +1,81 @@
 using AutoMapper;
 using task_4_library_manger.Contracts.Repository;
 using task_4_library_manger.Contracts.Service;
+using task_4_library_manger.Entities.Models;
 using task_4_library_manger.Exceptions;
 using task_4_library_manger.Models;
 using task_4_library_manger.Shared.DTOs;
+using task_4_library_manger.Shared.RequestFeatures;
 
 namespace task_4_library_manger.Service;
 
 public sealed class BookService(IRepositoryManager repository, IMapper mapper) : IBookService
 {
-    public IEnumerable<BookDto> GetBooks()
+    public async Task<(IEnumerable<BookDto> books, MetaData metaData)> GetBooksAsync(BookParameters bookParameters, bool trackChanges = false, Guid? authorId = null)
     {
-        var books = repository.BookRepository.GetBooks();
+        if (!bookParameters.ValidYearRange)
+        {
+            throw new InvalidYearRange();
+        }
 
-        var bookMapped = mapper.Map<IEnumerable<BookDto>>(books);
-        return bookMapped;
+        var booksWithMetaData = await repository.BookRepository.GetBooksAsync(bookParameters, trackChanges, authorId);
+
+        var bookMapped = mapper.Map<IEnumerable<BookDto>>(booksWithMetaData);
+        return (bookMapped, booksWithMetaData.MetaData);
     }
 
-    public IEnumerable<BookDto> GetBooksForAuthor(Guid authorId)
+    public async Task<BookDto> GetBookAsync(Guid authorId, Guid id, bool trackChanges = false)
     {
-        var books = repository.BookRepository.GetBooksForAuthor(authorId);
-
-        var bookMapped = mapper.Map<IEnumerable<BookDto>>(books);
-        return bookMapped;
-    }
-
-    public BookDto GetBook(Guid authorId, Guid id)
-    {
-        var book = repository.BookRepository.GetBook(authorId, id);
+        var book = await repository.BookRepository.GetBookAsync(authorId, id, trackChanges);
 
         var bookMapped = mapper.Map<BookDto>(book);
         return bookMapped;
     }
 
-    public BookDto CreateBookForAuthor(Guid authorId, BookDtoForCreation bookForCreation)
+    public async Task<BookDto> CreateBookForAuthorAsync(Guid authorId, BookDtoForCreation bookForCreation)
     {
-        var author = GetAuthorAndCheckIfExists(authorId);
+        var author = await GetAuthorAndCheckIfExists(authorId);
 
         var book = mapper.Map<Book>(bookForCreation);
 
         book.Id = Guid.NewGuid();
         book.AuthorId = author.Id;
-        repository.BookRepository.CreateBook(book);
+        repository.BookRepository.CreateBookAsync(book);
+        await repository.SaveAsync();
 
         var bookMapped = mapper.Map<BookDto>(book);
         return bookMapped;
     }
 
-    public void DeleteBookForAuthor(Guid authorId, Guid id)
+    public async Task DeleteBookForAuthorAsync(Guid authorId, Guid id)
     {
-        GetAuthorAndCheckIfExists(authorId);
+        await GetAuthorAndCheckIfExists(authorId);
 
-        var book = GetBookAndCheckIfExists(authorId, id);
-        repository.BookRepository.DeleteBook(book);
+        var book = await GetBookAndCheckIfExists(authorId, id);
+        repository.BookRepository.DeleteBookAsync(book);
+        await repository.SaveAsync();
     }
 
-    private Author GetAuthorAndCheckIfExists(Guid id)
+    private async Task<Author> GetAuthorAndCheckIfExists(Guid id)
     {
-        var author = repository.AuthorRepository.GetAuthor(id);
+        var author = await repository.AuthorRepository.GetAuthorAsync(id, false);
 
         return author ?? throw new AuthorNotFoundException(id);
     }
 
-    private Book GetBookAndCheckIfExists(Guid authorId, Guid id)
+    private async Task<Book> GetBookAndCheckIfExists(Guid authorId, Guid id)
     {
-        var book = repository.BookRepository.GetBook(authorId, id);
+        var book = await repository.BookRepository.GetBookAsync(authorId, id, false);
 
         return book ?? throw new BookNotFoundException(id);
     }
 
-    public void UpdateBookForAuthor(Guid authorId, Guid id, BookDtoForUpdate bookForUpdate)
+    public async Task UpdateBookForAuthorAsync(Guid authorId, Guid id, BookDtoForUpdate bookForUpdate)
     {
-        var author = GetAuthorAndCheckIfExists(authorId);
-
-        var bookEntity = GetBookAndCheckIfExists(authorId, id);
-
-        bookForUpdate.AuthorId = author.Id;
+        var bookEntity = await GetBookAndCheckIfExists(authorId, id);
 
         var book = mapper.Map(bookForUpdate, bookEntity);
-        repository.BookRepository.UpdateBook(book);
+        repository.BookRepository.UpdateBookAsync(book);
+        await repository.SaveAsync();
     }
 }

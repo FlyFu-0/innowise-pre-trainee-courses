@@ -10,7 +10,4 @@ public record BookDtoForManipulation
 
     [Required(ErrorMessage = "Published Year is required")]
     public DateOnly? PublishedYear { get; init; }
-
-    [Required(ErrorMessage = "Author is required")]
-    public Guid? AuthorId { get; set; }
 }

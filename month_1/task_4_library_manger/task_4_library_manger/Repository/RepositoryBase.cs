@@ -1,33 +1,29 @@
+using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using task_4_library_manger.Contracts.Repository;
 using task_4_library_manger.Models;
 
 namespace task_4_library_manger.Repository;
 
-public class RepositoryBase<T>(List<T> collection) : IRepositoryBase<T>
+public abstract class RepositoryBase<T>(RepositoryContext repositoryContext) : IRepositoryBase<T>
     where T : BaseModel
 {
-    protected readonly List<T> _collection = collection;
+    public IQueryable<T> FindAll(bool trackChanges)
+        => trackChanges
+            ? repositoryContext.Set<T>()
+            : repositoryContext.Set<T>().AsNoTracking();
 
-    public IQueryable<T> FindAll()
-        => _collection.AsQueryable();
-
-    public IQueryable<T> FindByCondition(Func<T, bool> expression)
-        => _collection.Where(expression).AsQueryable();
+    public IQueryable<T> FindByCondition(Expression<Func<T, bool>> expression, bool trackChanges)
+        => trackChanges
+            ? repositoryContext.Set<T>().Where(expression)
+            : repositoryContext.Set<T>().Where(expression).AsNoTracking();
 
     public void Create(T entity)
-    {
-        _collection.Add(entity);
-    }
+        => repositoryContext.Set<T>().Add(entity);
 
     public void Update(T entity)
-    {
-        var index = _collection.FindIndex(e => e.Id.Equals(entity.Id));
-        if (index != -1)
-        {
-            _collection[index] = entity;
-        }
-    }
+        => repositoryContext.Set<T>().Update(entity);
 
     public void Delete(T entity)
-        => _collection.Remove(entity);
+        => repositoryContext.Set<T>().Remove(entity);
 }

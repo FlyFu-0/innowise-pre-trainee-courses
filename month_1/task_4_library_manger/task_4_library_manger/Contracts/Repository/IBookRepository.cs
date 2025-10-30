@@ -1,16 +1,16 @@
 using task_4_library_manger.Models;
+using task_4_library_manger.Shared.RequestFeatures;
 
 namespace task_4_library_manger.Contracts.Repository;
 
 public interface IBookRepository
 {
-    IEnumerable<Book> GetBooks();
-    IEnumerable<Book> GetBooksForAuthor(Guid authorId);
-    Book GetBook(Guid authorId, Guid id);
+    Task<PagedList<Book>> GetBooksAsync(BookParameters booksParameters, bool trackChanges, Guid? authorId = null);
+    Task<Book> GetBookAsync(Guid authorId, Guid id, bool trackChanges);
 
-    void CreateBook(Book book);
+    void CreateBookAsync(Book book);
 
-    void UpdateBook(Book book);
+    void UpdateBookAsync(Book book);
 
-    void DeleteBook(Book book);
+    void DeleteBookAsync(Book book);
 }

@@ -9,4 +9,6 @@ public record AuthorDtoForManipulation
 
     [Required(ErrorMessage = "Date of birthday is required")]
     public DateTime? DateOfBirth { get; init; }
+
+    public IEnumerable<BookDtoForCreation>? Books { get; init; }
 }

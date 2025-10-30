@@ -9,4 +9,6 @@ public sealed class RepositoryManager(RepositoryContext repositoryContext) : IRe
 
     public IAuthorRepository AuthorRepository => _authorRepository.Value;
     public IBookRepository BookRepository => _bookRepository.Value;
+
+    public async Task SaveAsync() => await repositoryContext.SaveChangesAsync();
 }

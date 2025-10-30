@@ -1,16 +1,17 @@
 using task_4_library_manger.Shared.DTOs;
+using task_4_library_manger.Shared.RequestFeatures;
 
 namespace task_4_library_manger.Contracts.Service;
 
 public interface IAuthorService
 {
-    IEnumerable<AuthorDto> GetAllAuthors();
+    Task<(IEnumerable<AuthorDto> authors, MetaData metaData)> GetAllAuthorsAsync(AuthorParameters authorParameters,bool trackChanges);
 
-    AuthorDto GetAuthor(Guid id);
+    Task<AuthorDto> GetAuthorAsync(Guid id, bool trackChanges);
 
-    AuthorDto CreateAuthor(AuthorDtoForCreation author);
+    Task<AuthorDto> CreateAuthorAsync(AuthorDtoForCreation author);
 
-    void DeleteAuthor(Guid id);
+    Task DeleteAuthorAsync(Guid id);
 
-    void UpdateAuthor(Guid id, AuthorDtoForUpdate authorForUpdate);
+    Task UpdateAuthorAsync(Guid id, AuthorDtoForUpdate authorForUpdate);
 }
